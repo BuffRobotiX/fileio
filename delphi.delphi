@@ -1,0 +1,124 @@
+program Project1;
+
+{$APPTYPE CONSOLE}
+
+uses
+  SysUtils;
+
+var
+  f: Text;
+  fn: string;
+  ln: string;
+
+begin
+
+  fn := ExtractFilePath(ParamStr(0)) + 'fileio.txt';
+
+  // Create a new file
+  FileMode := fmOpenWrite;
+  AssignFile(f, fn);
+  try
+    Rewrite(f);
+    Writeln(f, 'hello');
+    Writeln(f, 'world');
+  finally
+    CloseFile(f);
+  end;
+
+  // Read from the file
+  FileMode := fmOpenRead;
+  AssignFile(f, fn);
+  try
+    Reset(f);
+    Readln(f, ln);
+    Readln(f, ln);
+    Writeln(ln);
+  finally
+    CloseFile(f);
+  end;
+
+end.
+
+// Because Delphi is a native Win32 compiler, you can also use the Windows API to handle all I/O operations:
+
+// program Project1;
+//
+// {$APPTYPE CONSOLE}
+//
+// uses
+//   SysUtils, Windows;
+//
+// var
+//   f: HFILE;
+//   fn: string;
+//   lns: AnsiString;
+//   fsize, amt, i: cardinal;
+//   AfterLine1: boolean;
+//
+// const
+//   data = AnsiString('hello'#13#10'world');
+//
+// begin
+//
+//   fn := ExtractFilePath(ParamStr(0)) + 'fileio.txt';
+//
+//   f := CreateFile(PChar(fn), GENERIC_WRITE, 0, nil, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+//   try
+//     WriteFile(f, data, length(data), amt, nil);
+//   finally
+//     CloseHandle(f);
+//   end;
+//
+//   f := CreateFile(PChar(fn), GENERIC_READ, 0, nil, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+//   try
+//     fsize := GetFileSize(f, nil);
+//     SetLength(lns, fsize);
+//     ReadFile(f, lns[1], fsize, amt, nil);
+//     for i := 1 to fsize do
+//       case lns[i] of
+//         #10: AfterLine1 := true;
+//       else
+//         if AfterLine1 then
+//           Write(lns[i]);
+//       end;
+//   finally
+//     CloseHandle(f);
+//   end;
+//
+//
+// end.
+
+// And, for completeness, I include the high-level approach, even though I never use it myself:
+
+// program Project1;
+//
+// {$APPTYPE CONSOLE}
+//
+// uses
+//   SysUtils, Classes;
+//
+// var
+//   fn: string;
+//
+// begin
+//
+//   fn := ExtractFilePath(ParamStr(0)) + 'fileio.txt';
+//
+//   with TStringList.Create do
+//     try
+//       Add('hello');
+//       Add('world');
+//       SaveToFile(fn);
+//     finally
+//       Free;
+//     end;
+//
+//   with TStringList.Create do
+//     try
+//       LoadFromFile(fn);
+//       Writeln(Strings[1]);
+//     finally
+//       Free;
+//     end;
+//
+// end.

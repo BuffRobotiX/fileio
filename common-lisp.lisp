@@ -1,0 +1,7 @@
+(defun main ()
+  (with-open-file (s "fileio.txt" :direction :output :if-exists :supersede)
+    (format s "hello"))
+  (with-open-file (s "fileio.txt" :direction :io :if-exists :append)
+    (format s "~%world")
+    (file-position s 0)
+    (loop repeat 2 for line = (read-line s nil nil) finally (print line))))
