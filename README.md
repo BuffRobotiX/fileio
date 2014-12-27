@@ -48,3 +48,4 @@ Ruby
 Scala
 Shell
 Visual Basic 6.0
+GML (The Game Maker Language)
